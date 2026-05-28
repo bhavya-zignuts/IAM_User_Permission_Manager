@@ -6,6 +6,15 @@ get_account_id() {
   aws sts get-caller-identity --query "Account" --output text 2>/dev/null
 }
 
+get_account_alias() {
+  local alias
+  alias="$(aws iam list-account-aliases --query "AccountAliases[0]" --output text 2>/dev/null)" || return 1
+  if [[ "$alias" == "None" ]]; then
+    return 1
+  fi
+  printf '%s\n' "$alias"
+}
+
 iam_user_exists() {
   local user_name="$1"
   if aws iam get-user --user-name "$user_name" >/dev/null 2>&1; then
@@ -17,6 +26,41 @@ iam_user_exists() {
 create_iam_user() {
   local user_name="$1"
   aws iam create-user --user-name "$user_name" >/dev/null
+}
+
+create_login_profile() {
+  local user_name="$1"
+  local password="$2"
+  aws iam create-login-profile \
+    --user-name "$user_name" \
+    --password "$password" \
+    --no-password-reset-required >/dev/null
+}
+
+delete_login_profile() {
+  local user_name="$1"
+  aws iam delete-login-profile --user-name "$user_name" >/dev/null
+}
+
+get_account_password_policy_value() {
+  local key="$1"
+  aws iam get-account-password-policy \
+    --query "PasswordPolicy.${key}" \
+    --output text 2>/dev/null
+}
+
+create_access_key_for_user() {
+  local user_name="$1"
+  aws iam create-access-key \
+    --user-name "$user_name" \
+    --query "AccessKey.[AccessKeyId,SecretAccessKey]" \
+    --output text
+}
+
+delete_access_key_for_user() {
+  local user_name="$1"
+  local access_key_id="$2"
+  aws iam delete-access-key --user-name "$user_name" --access-key-id "$access_key_id" >/dev/null
 }
 
 iam_policy_exists() {

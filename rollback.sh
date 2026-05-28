@@ -17,6 +17,16 @@ if [[ -n "${ROLLBACK_RESOURCES:-}" ]]; then
     type="${item%%:*}"
     name="${item#*:}"
     case "$type" in
+      access-key)
+        user_name="${name%%|*}"
+        access_key_id="${name#*|}"
+        echo "[INFO] Rolling back access key for $user_name" | tee -a "$LOG_FILE"
+        delete_access_key_for_user "$user_name" "$access_key_id" || true
+        ;;
+      login-profile)
+        echo "[INFO] Rolling back console login profile for $name" | tee -a "$LOG_FILE"
+        delete_login_profile "$name" || true
+        ;;
       attachment)
         user_name="${name%%|*}"
         policy_arn="${name#*|}"

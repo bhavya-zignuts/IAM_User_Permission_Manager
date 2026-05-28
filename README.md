@@ -76,6 +76,7 @@ The script will guide you through:
 4. Selecting or creating the target bucket/repository
 5. Creating or attaching a policy
 6. Reviewing the planned changes before applying them
+7. Printing resource links, attached policy details, and any generated credentials in the result summary
 
 ## Logging
 
@@ -94,6 +95,9 @@ If you cancel at the review stage, no AWS changes are applied. If an AWS command
   - `ReadOnly`
   - `ReadWrite`
   - `FullBucketAdmin`
+- If a new IAM user is created for S3, the script can optionally create a console sign-in password.
+- If a new IAM user is created for CodeCommit, the script creates an IAM access key and prints it once in the result summary.
+- CodeCommit results include a direct HTTPS clone URL and `git clone` command.
 
 ## Important
 

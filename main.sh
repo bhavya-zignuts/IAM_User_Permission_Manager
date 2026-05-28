@@ -23,6 +23,14 @@ PLAN_CODECOMMIT_POLICY_NAME=""
 PLAN_CODECOMMIT_POLICY_TYPE=""
 PLAN_S3_POLICY_NAME=""
 PLAN_EXISTING_POLICY_NAME=""
+PLAN_CREATE_CONSOLE_PASSWORD="no"
+PLAN_CONSOLE_PASSWORD=""
+RESULT_CONSOLE_PASSWORD=""
+RESULT_CONSOLE_SIGNIN_URL=""
+RESULT_ACCESS_KEY_ID=""
+RESULT_SECRET_ACCESS_KEY=""
+RESULT_ATTACHED_POLICY_NAME=""
+RESULT_ATTACHED_POLICY_ARN=""
 
 log_info() {
   local message="$1"
@@ -107,6 +115,13 @@ review_changes() {
     if [[ "$PLAN_S3_PERMISSION_LEVEL" != "" ]]; then
       echo "S3 Permission:     $PLAN_S3_PERMISSION_LEVEL"
     fi
+    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
+      if [[ "$PLAN_CREATE_CONSOLE_PASSWORD" == "yes" ]]; then
+        echo "Console Password:  Create login profile"
+      else
+        echo "Console Password:  Do not create"
+      fi
+    fi
   fi
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
     echo "Service:           CodeCommit"
@@ -118,6 +133,9 @@ review_changes() {
     echo "Repository:        $PLAN_CODECOMMIT_REPO"
     if [[ "$PLAN_CODECOMMIT_POLICY_TYPE" != "" ]]; then
       echo "Policy Type:       $(codecommit_policy_type_label)"
+    fi
+    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
+      echo "Access Keys:       Create IAM access key"
     fi
   fi
   if [[ "$PLAN_S3_POLICY_NAME" != "" ]]; then
@@ -191,6 +209,7 @@ block_b() {
     case "$choice" in
       1)
         block_b1
+        prompt_console_password_for_new_user
         break
         ;;
       2)
@@ -283,6 +302,85 @@ select_s3_permission_level() {
       *) echo "Invalid selection. Choose 1, 2 or 3." ;;
     esac
   done
+}
+
+prompt_console_password_for_new_user() {
+  if [[ "$PLAN_USER_ACTION" != "new" ]]; then
+    return
+  fi
+
+  echo -e "\n=== IAM Console Sign-In ==="
+  if confirm "Create a console sign-in password for new IAM user '$PLAN_IAM_USER'?"; then
+    PLAN_CREATE_CONSOLE_PASSWORD="yes"
+    while true; do
+      read -r -s -p "Enter console password for '$PLAN_IAM_USER': " password
+      echo
+      if ! validate_console_password "$password"; then
+        continue
+      fi
+      read -r -s -p "Confirm console password: " confirm_password
+      echo
+      if [[ "$password" != "$confirm_password" ]]; then
+        echo "Passwords do not match."
+        continue
+      fi
+      PLAN_CONSOLE_PASSWORD="$password"
+      break
+    done
+  else
+    PLAN_CREATE_CONSOLE_PASSWORD="no"
+  fi
+}
+
+validate_console_password() {
+  local password="$1"
+  local min_length
+  local policy_readable=1
+
+  min_length="$(get_account_password_policy_value "MinimumPasswordLength" 2>/dev/null || true)"
+  if [[ ! "$min_length" =~ ^[0-9]+$ ]]; then
+    min_length=8
+  else
+    policy_readable=0
+  fi
+
+  if [[ -z "$password" ]]; then
+    echo "Password cannot be empty."
+    return 1
+  fi
+
+  if [[ ${#password} -lt $min_length ]]; then
+    echo "Password must be at least $min_length characters long."
+    return 1
+  fi
+
+  validate_password_character_rule "$password" "RequireUppercaseCharacters" '[A-Z]' "uppercase letter" "$policy_readable" || return 1
+  validate_password_character_rule "$password" "RequireLowercaseCharacters" '[a-z]' "lowercase letter" "$policy_readable" || return 1
+  validate_password_character_rule "$password" "RequireNumbers" '[0-9]' "number" "$policy_readable" || return 1
+  validate_password_character_rule "$password" "RequireSymbols" '[^A-Za-z0-9]' "symbol" "$policy_readable" || return 1
+
+  return 0
+}
+
+validate_password_character_rule() {
+  local password="$1"
+  local policy_key="$2"
+  local pattern="$3"
+  local label="$4"
+  local policy_readable="$5"
+  local required
+
+  required="$(get_account_password_policy_value "$policy_key" 2>/dev/null || true)"
+  required="$(printf '%s' "$required" | tr '[:upper:]' '[:lower:]')"
+  if [[ "$policy_readable" -eq 0 && "$required" != "true" ]]; then
+    return 0
+  fi
+
+  if [[ ! "$password" =~ $pattern ]]; then
+    echo "Password must include at least one $label."
+    return 1
+  fi
+  return 0
 }
 
 block_b2() {
@@ -434,6 +532,30 @@ codecommit_policy_type_label() {
   esac
 }
 
+console_signin_url() {
+  local account_label
+  if account_label="$(get_account_alias)" && [[ -n "$account_label" ]]; then
+    printf 'https://%s.signin.aws.amazon.com/console\n' "$account_label"
+    return
+  fi
+  if ! account_label="$(get_account_id)" || [[ -z "$account_label" ]]; then
+    account_label="signin"
+  fi
+  printf 'https://%s.signin.aws.amazon.com/console\n' "$account_label"
+}
+
+s3_console_url() {
+  printf 'https://s3.console.aws.amazon.com/s3/buckets/%s?region=%s\n' "$PLAN_S3_BUCKET" "$AWS_REGION"
+}
+
+codecommit_console_url() {
+  printf 'https://%s.console.aws.amazon.com/codesuite/codecommit/repositories/%s/browse\n' "$AWS_REGION" "$PLAN_CODECOMMIT_REPO"
+}
+
+codecommit_clone_url() {
+  printf 'https://git-codecommit.%s.amazonaws.com/v1/repos/%s\n' "$AWS_REGION" "$PLAN_CODECOMMIT_REPO"
+}
+
 perform_plan() {
   APPLY_STARTED=1
 
@@ -441,6 +563,17 @@ perform_plan() {
     log_info "Creating IAM user '$PLAN_IAM_USER'."
     create_iam_user "$PLAN_IAM_USER"
     queue_resource "user:$PLAN_IAM_USER"
+  fi
+
+  if [[ "$PLAN_CREATE_CONSOLE_PASSWORD" == "yes" ]]; then
+    log_info "Creating console login profile for IAM user '$PLAN_IAM_USER'."
+    if ! create_login_profile "$PLAN_IAM_USER" "$PLAN_CONSOLE_PASSWORD"; then
+      log_error "AWS rejected the console password. Use at least 8 characters with uppercase, lowercase, number, and symbol, then rerun."
+      return 1
+    fi
+    queue_resource "login-profile:$PLAN_IAM_USER"
+    RESULT_CONSOLE_PASSWORD="$PLAN_CONSOLE_PASSWORD"
+    RESULT_CONSOLE_SIGNIN_URL="$(console_signin_url)"
   fi
 
   if [[ "$PLAN_S3_ACTION" != "" ]]; then
@@ -472,16 +605,31 @@ perform_plan() {
       log_info "Attaching policy '$PLAN_S3_POLICY_NAME' to IAM user '$PLAN_IAM_USER'."
       attach_policy_to_user "$PLAN_IAM_USER" "$policy_arn"
       queue_resource "attachment:$PLAN_IAM_USER|$policy_arn"
+      RESULT_ATTACHED_POLICY_NAME="$PLAN_S3_POLICY_NAME"
+      RESULT_ATTACHED_POLICY_ARN="$policy_arn"
     elif [[ "$PLAN_EXISTING_POLICY_NAME" != "" ]]; then
       log_info "Attaching existing policy '$PLAN_EXISTING_POLICY_NAME' to IAM user '$PLAN_IAM_USER'."
       local policy_arn
       policy_arn="$(get_policy_arn_by_name "$PLAN_EXISTING_POLICY_NAME")"
       attach_policy_to_user "$PLAN_IAM_USER" "$policy_arn"
       queue_resource "attachment:$PLAN_IAM_USER|$policy_arn"
+      RESULT_ATTACHED_POLICY_NAME="$PLAN_EXISTING_POLICY_NAME"
+      RESULT_ATTACHED_POLICY_ARN="$policy_arn"
     fi
   fi
 
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
+    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
+      log_info "Creating IAM access key for CodeCommit user '$PLAN_IAM_USER'."
+      local access_key_output
+      if ! access_key_output="$(create_access_key_for_user "$PLAN_IAM_USER")"; then
+        log_error "Failed to create access key for IAM user '$PLAN_IAM_USER'."
+        return 1
+      fi
+      read -r RESULT_ACCESS_KEY_ID RESULT_SECRET_ACCESS_KEY <<< "$access_key_output"
+      queue_resource "access-key:$PLAN_IAM_USER|$RESULT_ACCESS_KEY_ID"
+    fi
+
     if [[ "$PLAN_CODECOMMIT_ACTION" == "new" ]]; then
       log_info "Creating new CodeCommit repo '$PLAN_CODECOMMIT_REPO'."
       create_codecommit_repo "$PLAN_CODECOMMIT_REPO"
@@ -519,12 +667,16 @@ perform_plan() {
       rm -f "$policy_file"
       attach_policy_to_user "$PLAN_IAM_USER" "$policy_arn"
       queue_resource "attachment:$PLAN_IAM_USER|$policy_arn"
+      RESULT_ATTACHED_POLICY_NAME="$PLAN_CODECOMMIT_POLICY_NAME"
+      RESULT_ATTACHED_POLICY_ARN="$policy_arn"
     elif [[ "$PLAN_EXISTING_POLICY_NAME" != "" ]]; then
       log_info "Attaching existing policy '$PLAN_EXISTING_POLICY_NAME' to IAM user '$PLAN_IAM_USER'."
       local policy_arn
       policy_arn="$(get_policy_arn_by_name "$PLAN_EXISTING_POLICY_NAME")"
       attach_policy_to_user "$PLAN_IAM_USER" "$policy_arn"
       queue_resource "attachment:$PLAN_IAM_USER|$policy_arn"
+      RESULT_ATTACHED_POLICY_NAME="$PLAN_EXISTING_POLICY_NAME"
+      RESULT_ATTACHED_POLICY_ARN="$policy_arn"
     fi
   fi
 }
@@ -540,6 +692,7 @@ block_result() {
   if [[ "$PLAN_S3_ACTION" != "" ]]; then
     echo "S3 Bucket: $PLAN_S3_BUCKET"
     echo "S3 Bucket Action: $PLAN_S3_ACTION"
+    echo "S3 Console URL: $(s3_console_url)"
     if [[ "$PLAN_S3_PERMISSION_LEVEL" != "" ]]; then
       echo "S3 Permission Level: $PLAN_S3_PERMISSION_LEVEL"
     fi
@@ -548,6 +701,9 @@ block_result() {
     echo "CodeCommit Repo: $PLAN_CODECOMMIT_REPO"
     echo "CodeCommit Repo Action: $PLAN_CODECOMMIT_ACTION"
     echo "Policy Type: $(codecommit_policy_type_label)"
+    echo "CodeCommit Console URL: $(codecommit_console_url)"
+    echo "CodeCommit Clone URL: $(codecommit_clone_url)"
+    echo "Git Clone Command: git clone $(codecommit_clone_url)"
   fi
   if [[ "$PLAN_S3_POLICY_NAME" != "" ]]; then
     echo "Created Policy: $PLAN_S3_POLICY_NAME"
@@ -558,11 +714,18 @@ block_result() {
   if [[ "$PLAN_EXISTING_POLICY_NAME" != "" ]]; then
     echo "Attached Existing Policy: $PLAN_EXISTING_POLICY_NAME"
   fi
-  if [[ "$PLAN_S3_ACTION" != "" ]]; then
-    echo "S3 Console URL: https://s3.console.aws.amazon.com/s3/buckets/$PLAN_S3_BUCKET?region=$AWS_REGION"
+  if [[ "$RESULT_ATTACHED_POLICY_NAME" != "" ]]; then
+    echo "Attached Policy Name: $RESULT_ATTACHED_POLICY_NAME"
+    echo "Attached Policy ARN: $RESULT_ATTACHED_POLICY_ARN"
   fi
-  if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
-    echo "CodeCommit Console URL: https://$AWS_REGION.console.aws.amazon.com/codesuite/codecommit/repositories/$PLAN_CODECOMMIT_REPO/browse"
+  if [[ "$RESULT_CONSOLE_PASSWORD" != "" ]]; then
+    echo "Console Sign-In User: $PLAN_IAM_USER"
+    echo "Console Sign-In Password: $RESULT_CONSOLE_PASSWORD"
+    echo "Console Sign-In URL: $RESULT_CONSOLE_SIGNIN_URL"
+  fi
+  if [[ "$RESULT_ACCESS_KEY_ID" != "" ]]; then
+    echo "IAM Access Key ID: $RESULT_ACCESS_KEY_ID"
+    echo "IAM Secret Access Key: $RESULT_SECRET_ACCESS_KEY"
   fi
   echo "==========================="
 }

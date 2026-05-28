@@ -130,3 +130,60 @@
 [INFO] 2026-05-28 16:22:00 Creating S3 policy 's3-fullaccess-demo-bucket-testing-1-for-policyscript'.
 [INFO] 2026-05-28 16:22:02 Attaching policy 's3-fullaccess-demo-bucket-testing-1-for-policyscript' to IAM user 'mangeshv'.
 [INFO] 2026-05-28 16:22:04 Completed all requested operations.
+[INFO] 2026-05-28 18:25:41 Loading configuration
+[INFO] 2026-05-28 18:25:41 Selected region: ap-south-1
+[INFO] 2026-05-28 18:25:41 Creating IAM user 'new-s3-user'.
+[INFO] 2026-05-28 18:25:41 Creating console login profile for IAM user 'new-s3-user'.
+[INFO] 2026-05-28 18:25:41 Using existing S3 bucket 'existing-bucket'.
+[INFO] 2026-05-28 18:25:41 Attaching existing policy 'existing-s3-policy' to IAM user 'new-s3-user'.
+[INFO] 2026-05-28 18:25:41 Completed all requested operations.
+[INFO] 2026-05-28 18:25:58 Loading configuration
+[INFO] 2026-05-28 18:25:58 Selected region: ap-south-1
+[INFO] 2026-05-28 18:25:58 Creating IAM user 'new-code-user'.
+[INFO] 2026-05-28 18:25:58 Creating IAM access key for CodeCommit user 'new-code-user'.
+[INFO] 2026-05-28 18:25:58 Using existing CodeCommit repo 'existing-repo'.
+[INFO] 2026-05-28 18:25:58 Attaching existing policy 'existing-code-policy' to IAM user 'new-code-user'.
+[INFO] 2026-05-28 18:25:58 Completed all requested operations.
+[INFO] 2026-05-28 18:28:28 Loading configuration
+[INFO] 2026-05-28 18:28:30 Selected region: ap-south-1
+[INFO] 2026-05-28 18:32:00 Creating IAM user 'bhavya1'.
+[INFO] 2026-05-28 18:32:02 Creating console login profile for IAM user 'bhavya1'.
+[INFO] 2026-05-28 18:33:22 Loading configuration
+[INFO] 2026-05-28 18:33:22 Selected region: ap-south-1
+[INFO] 2026-05-28 18:33:22 User canceled before applying changes. Starting rollback/exit.
+[INFO] 2026-05-28 18:33:22 No resources to rollback.
+[INFO] 2026-05-28 18:34:17 Loading configuration
+[INFO] 2026-05-28 18:34:18 Selected region: ap-south-1
+[INFO] 2026-05-28 18:34:31 Script terminated by user before changes.
+[INFO] 2026-05-28 18:34:36 Loading configuration
+[INFO] 2026-05-28 18:34:38 Selected region: ap-south-1
+[INFO] 2026-05-28 18:37:15 Creating IAM user 'bhavya2'.
+[INFO] 2026-05-28 18:37:17 Creating console login profile for IAM user 'bhavya2'.
+[INFO] 2026-05-28 18:38:51 Loading configuration
+[INFO] 2026-05-28 18:38:51 Selected region: ap-south-1
+[INFO] 2026-05-28 18:38:51 User canceled before applying changes. Starting rollback/exit.
+[INFO] 2026-05-28 18:38:51 No resources to rollback.
+[INFO] 2026-05-28 18:39:03 Loading configuration
+[INFO] 2026-05-28 18:39:04 Selected region: ap-south-1
+[INFO] 2026-05-28 18:40:44 Creating IAM user 'bhavya3'.
+[INFO] 2026-05-28 18:40:46 Creating console login profile for IAM user 'bhavya3'.
+[INFO] 2026-05-28 18:40:49 Creating new S3 bucket 'new-demo-test-zignuts-1' in region ap-south-1.
+[INFO] 2026-05-28 18:40:51 Creating S3 policy 's3-access-new-demo-test-zignuts-1'.
+[INFO] 2026-05-28 18:40:52 Attaching policy 's3-access-new-demo-test-zignuts-1' to IAM user 'bhavya3'.
+[INFO] 2026-05-28 18:40:55 Completed all requested operations.
+[INFO] 2026-05-28 18:42:12 Loading configuration
+[INFO] 2026-05-28 18:42:14 Selected region: ap-south-1
+[INFO] 2026-05-28 18:43:37 Using existing S3 bucket 'new-demo-test-zignuts-1'.
+[INFO] 2026-05-28 18:43:37 Creating S3 policy 's3-read-new-demo-test-zignuts-1'.
+[INFO] 2026-05-28 18:43:39 Attaching policy 's3-read-new-demo-test-zignuts-1' to IAM user 'bhavya3'.
+[INFO] 2026-05-28 18:43:41 Completed all requested operations.
+[INFO] 2026-05-28 18:44:05 Loading configuration
+[INFO] 2026-05-28 18:44:07 Selected region: ap-south-1
+[INFO] 2026-05-28 18:45:05 Creating new CodeCommit repo 'new-demo-test-zignuts-1'.
+[INFO] 2026-05-28 18:45:07 Creating CodeCommit policy 'repo-access-new-demo-test-zignuts-1-lead' for 'lead'.
+[INFO] 2026-05-28 18:45:11 Completed all requested operations.
+[INFO] 2026-05-28 18:46:24 Loading configuration
+[INFO] 2026-05-28 18:46:26 Selected region: ap-south-1
+[INFO] 2026-05-28 18:47:08 Using existing S3 bucket 'new-demo-test-zignuts-1'.
+[INFO] 2026-05-28 18:47:08 Attaching existing policy 's3-access-new-demo-test-zignuts-1' to IAM user 'mangesh'.
+[INFO] 2026-05-28 18:47:12 Completed all requested operations.
