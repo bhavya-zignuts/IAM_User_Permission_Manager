@@ -1,0 +1,74 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CodeCommitLeadFullAccess",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:CreateBranch",
+        "codecommit:ListPullRequests",
+        "codecommit:UpdatePullRequestApprovalRuleContent",
+        "codecommit:GetPullRequestApprovalStates",
+        "codecommit:CreateCommit",
+        "codecommit:ListTagsForResource",
+        "codecommit:BatchDescribeMergeConflicts",
+        "codecommit:GetCommentsForComparedCommit",
+        "codecommit:GetCommentReactions",
+        "codecommit:GetComment",
+        "codecommit:UpdateComment",
+        "codecommit:MergePullRequestByThreeWay",
+        "codecommit:CreatePullRequest",
+        "codecommit:UpdatePullRequestApprovalState",
+        "codecommit:GetPullRequestOverrideState",
+        "codecommit:PostCommentForPullRequest",
+        "codecommit:GetRepositoryTriggers",
+        "codecommit:UpdatePullRequestDescription",
+        "codecommit:GetObjectIdentifier",
+        "codecommit:BatchGetPullRequests",
+        "codecommit:GetFile",
+        "codecommit:GetUploadArchiveStatus",
+        "codecommit:MergePullRequestBySquash",
+        "codecommit:GetDifferences",
+        "codecommit:GetRepository",
+        "codecommit:GetMergeConflicts",
+        "codecommit:GetMergeCommit",
+        "codecommit:PostCommentForComparedCommit",
+        "codecommit:GitPush",
+        "codecommit:GetMergeOptions",
+        "codecommit:PutCommentReaction",
+        "codecommit:GetTree",
+        "codecommit:GetReferences",
+        "codecommit:GetBlob",
+        "codecommit:DescribeMergeConflicts",
+        "codecommit:UpdatePullRequestTitle",
+        "codecommit:ListFileCommitHistory",
+        "codecommit:GetCommit",
+        "codecommit:GetCommitHistory",
+        "codecommit:GetCommitsFromMergeBase",
+        "codecommit:BatchGetCommits",
+        "codecommit:DescribePullRequestEvents",
+        "codecommit:UpdatePullRequestStatus",
+        "codecommit:UpdateDefaultBranch",
+        "codecommit:GetPullRequest",
+        "codecommit:ListBranches",
+        "codecommit:DeleteBranch"
+      ],
+      "Resource": [
+        "arn:aws:codecommit:${REGION}:${ACCOUNT_ID}:${REPO_NAME}"
+      ]
+    },
+    {
+      "Sid": "CodeCommitGlobalLeadAccess",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:ListRepositoriesForApprovalRuleTemplate",
+        "codecommit:GetApprovalRuleTemplate",
+        "codecommit:ListApprovalRuleTemplates",
+        "codecommit:ListRepositories",
+        "codecommit:UpdateApprovalRuleTemplateContent",
+        "codecommit:GitPush"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

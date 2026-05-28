@@ -1,0 +1,219 @@
+Script for IAM user policy attach
+
+I am writing  currently  a flow based description so consider as a flow block wise 
+
+Block A: welcome!! what you want to do please select option asks three options
+	A1: IAM user already exists
+	A2: create a new IAM user
+    A3: Terminate the Script without saving
+
+    after selection from the A1,A2,A3
+    if select
+
+        A1: Enter a name of IAM user which already exists
+        (then check the name it is valid or not valid=can proceed invalid=can not proceed with this IAM user name)
+        if invalid or incorrect then tell the user that enterd name is not a IAM user and  go to the Block A 
+        if valid then go to the Block B
+
+        A2:  Enter a name of new IAM user which you want to create
+        (then check the name it is valid or not valid=can proceed invalid=can not proceed with this IAM user name)
+        valid= create a new IAM user
+        invalid= (means IAM user of this name is already present it is already exists then tell to the user and go to the Block A
+
+        A3: Terminate the Script without saving
+        if any command that has been executed from this script or this block discard it that means if anything is created or updated then abort that all things  
+
+Block B: which permissions you need to give please select the permission asks two options
+    B1: S3 permissions
+    B2: CodeCommit permissions
+    B3: Terminate the Script without saving
+
+    after selection from the B1,B2,B3
+    if select
+        B1: that asks for two options
+            B11: If S3 bucket is already exists
+            B12: If S3 bucket is not exists and you want to create
+            after selection from the B11,B12
+            if select
+                B11: enter name
+                (checking that name is correct or not)
+                if correct = go to Block C
+                if incorrect= tell the user that entered name is incorrect and go to B1
+
+                B12: enter name
+                (checking the name)
+                if already exists= go to B1
+                if not exists and able to create a bucket then create a bucket name and go to the Block C
+
+        B2: that asks for two options
+            B21: If CodeCommit repo name is already exists
+            B22: If CodeCommit repo is not exists and you want to create
+            after selection from B21,B22
+            if select
+                B21: enter name
+                (checking that name is correct or not)
+                if correct = go to Block D
+                if incorrect= tell user that entered name is incorrect please select again go to B2
+
+                B22: enter name
+                (checking the name)
+                if already exists= go to B1
+                if not exists and able to create a repo then create a repo and go to the Block D
+                
+        B3: Terminate the Script without saving
+            if any command that has been executed from this script or this block discard it that means if anything is created or updated then abort that all things  
+
+Block C: which oprartion you want to perform and aasks for the 3 options
+    C1: want to create a IAM policy
+    C2: want to attach a already existing IAM policy 
+    C3: Terminate the Script without saving
+    after selection from C1,C2,C3
+    If select
+        C1: enter a name that you want to create 
+        if entered name is 
+            valid= go to the Block E
+            invalid= tell the user that this policy is already existing and go to the Block C
+
+        C2: Enter a name that is already existing in IAM 
+        if enterd name is 
+        valid= attach that IAM policy to the S3 bucket and go to the Block Result
+        invalid= if entered name policy is not exists then tell to the user and go to the Block C
+
+        C3: Terminate the Script without saving
+        if any command that has been executed from this script or this block discard it that means if anything is created or updated then abort that all things
+
+Block E: 
+    apply json policy ot the S3 to the IAM user 
+    and then go to the Block Result
+
+
+Block D: that asks for three options 
+    D1: Want to create CodeCommit IAM policy
+    D2: want to attach existing IAM policy
+    D3: Terminate the script without saving
+
+    after selection from D1,D2,D3
+    If select
+        D1: enter a name of CodeCommit IAM policy that you want to create
+        then check the name 
+        valid= go the Block F 
+        invalid= go to the Block D and also tell user that entered name is already existing IAM policy
+
+        D2: enter a name of IAM policy that you want to attach
+        then check the name
+        valid= attach that policy to the IAM user
+        invalid= tell the user that enterd IAM policy name is not found and go the Block D 
+
+        D3: Terminate the Script without saving
+        if any command that has been executed from this script or this block discard it that means if anything is created or updated then abort that all things
+
+Block F:
+    that asks for two options like which policy you want to give to IAM user
+    F1: Devloper policy
+    F2: lead policy
+
+    after selection from F1,F2
+    If select
+        F1: attach Devloper policy that I have give you as a dev policy
+        F2: attach a lead policy that I have give you as a lead policy 
+
+Block Result:
+    this block prints all things that happen during the script execution in a well formated way so that user can understand that what has been happen 
+    also prints that IAM username , which policy has been attached to that , if any resource is created than also mention that,access link of s3 bucket and CodeCommit link whichever is applicapble
+
+I want ot create this script for my aws account so everytime i do not need to create a policy by manually in UI I can direclty create by running this script
+
+you please make a script for me as I have mention the workflow I have already provided the JSON policy of the S3 and CodeCommit dev and CodeCommit lead so edit according to perform action by the user like if user is selecting already existing bucket, existing codecommit repo then do accordingly 
+
+
+Add Confirmation Before Final Apply
+Currently actions happen immediately.
+Better approach:
+New Block: REVIEW
+Before applying changes:
+Please review changes:
+IAM User: bhavya-dev
+S3 Bucket: aktive-test-s3
+Policy: s3-access-policy
+Attach Policy: YES
+Proceed?
+1. Yes
+2. No (Rollback & Exit)
+This avoids accidental creation
+
+Add Logging
+Very useful.
+Add log file:
+LOG_FILE="iam-automation.log"
+Example:
+echo "[INFO] Creating IAM User..." | tee -a $LOG_FILE
+This helps debugging
+
+mentioned checking names.
+Good.
+But add regex validation too.
+IAM Username Validation
+AWS IAM usernames allow:
+[a-zA-Z0-9+=,.@_-]
+S3 Bucket Naming Rules
+Must be:
+globally unique
+lowercase
+3–63 chars
+no uppercase
+no underscores
+Policy Name Validation
+Avoid spaces.
+6. Add Region Selection
+For S3 + CodeCommit.
+Because CodeCommit ARN depends on region.
+Add:
+Select AWS Region:
+1. ap-south-1
+2. us-east-1
+3. custom
+Store:
+AWS_REGION="ap-south-1"
+
+Create:
+Option 1 — ReadOnly
+Option 2 — ReadWrite
+Option 3 — FullBucketAdmin
+Much safer.
+Because currently your policy allows:
+bucket policy modification
+ACL changes
+replication
+access point creation
+public access block changes
+Developer users should not get these usually.
+8. Use Policy Templates Dynamically
+Instead of hardcoding bucket/repo names in JSON.
+Better:
+Create template JSON.
+Example:
+"Resource": [
+  "arn:aws:s3:::${BUCKET_NAME}",
+  "arn:aws:s3:::${BUCKET_NAME}/*"
+]
+Then replace dynamically.
+Same for CodeCommit.
+
+also uses the better folder structure here below is the demo folder structure
+project/
+│
+├── main.sh
+├── rollback.sh
+├── config.sh
+├── policies/
+│   ├── s3-template.json
+│   ├── codecommit-dev.json
+│   └── codecommit-lead.json
+│
+├── logs/
+│
+└── utils/
+    ├── validation.sh
+    ├── iam.sh
+    ├── s3.sh
+    └── codecommit.sh

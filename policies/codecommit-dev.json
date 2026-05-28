@@ -1,0 +1,65 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CodeCommitDevReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:CreateBranch",
+        "codecommit:GetTree",
+        "codecommit:ListPullRequests",
+        "codecommit:GetBlob",
+        "codecommit:GetReferences",
+        "codecommit:CreateCommit",
+        "codecommit:GetPullRequestApprovalStates",
+        "codecommit:DescribeMergeConflicts",
+        "codecommit:UpdatePullRequestTitle",
+        "codecommit:BatchDescribeMergeConflicts",
+        "codecommit:GetCommentsForComparedCommit",
+        "codecommit:GetCommentReactions",
+        "codecommit:GetCommit",
+        "codecommit:GetComment",
+        "codecommit:GetCommitHistory",
+        "codecommit:GetCommitsFromMergeBase",
+        "codecommit:BatchGetCommits",
+        "codecommit:DescribePullRequestEvents",
+        "codecommit:UpdatePullRequestStatus",
+        "codecommit:CreatePullRequest",
+        "codecommit:GetPullRequest",
+        "codecommit:ListBranches",
+        "codecommit:GetPullRequestOverrideState",
+        "codecommit:GetRepositoryTriggers",
+        "codecommit:UpdatePullRequestDescription",
+        "codecommit:GitPull",
+        "codecommit:BatchGetRepositories",
+        "codecommit:GetCommentsForPullRequest",
+        "codecommit:GetObjectIdentifier",
+        "codecommit:CancelUploadArchive",
+        "codecommit:GetFolder",
+        "codecommit:BatchGetPullRequests",
+        "codecommit:GetFile",
+        "codecommit:GetUploadArchiveStatus",
+        "codecommit:EvaluatePullRequestApprovalRules",
+        "codecommit:GetDifferences",
+        "codecommit:GetRepository",
+        "codecommit:GetBranch",
+        "codecommit:GetMergeConflicts",
+        "codecommit:GetMergeCommit",
+        "codecommit:GetMergeOptions",
+        "codecommit:GitPush"
+      ],
+      "Resource": [
+        "arn:aws:codecommit:${REGION}:${ACCOUNT_ID}:${REPO_NAME}"
+      ]
+    },
+    {
+      "Sid": "CodeCommitGlobalRead",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:GetApprovalRuleTemplate",
+        "codecommit:ListRepositories"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

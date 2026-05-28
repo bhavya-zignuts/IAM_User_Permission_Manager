@@ -1,0 +1,87 @@
+[INFO] 2026-05-28 12:43:44 Loading configuration
+[INFO] 2026-05-28 12:43:53 Selected region: ap-south-1
+[INFO] 2026-05-28 12:47:43 Loading configuration
+[INFO] 2026-05-28 12:47:45 Selected region: ap-south-1
+[INFO] 2026-05-28 12:49:27 Creating IAM user 'mangeshv'.
+[INFO] 2026-05-28 12:49:31 Creating new S3 bucket 'demo-bucket-for-testing' in region ap-south-1.
+[INFO] 2026-05-28 12:53:21 Loading configuration
+[INFO] 2026-05-28 12:53:24 Selected region: ap-south-1
+[INFO] 2026-05-28 13:02:43 Loading configuration
+[INFO] 2026-05-28 13:03:09 Selected region: ap-south-1
+[INFO] 2026-05-28 13:04:39 Loading configuration
+[INFO] 2026-05-28 13:06:59 Loading configuration
+[INFO] 2026-05-28 13:06:59 Selected region: ap-south-1
+[INFO] 2026-05-28 13:07:32 Loading configuration
+[INFO] 2026-05-28 13:07:32 Selected region: ap-south-1
+[INFO] 2026-05-28 13:07:56 Loading configuration
+[INFO] 2026-05-28 13:07:56 Selected region: ap-south-1
+[INFO] 2026-05-28 13:08:53 Loading configuration
+[INFO] 2026-05-28 13:08:53 Selected region: ap-south-1
+[INFO] 2026-05-28 13:09:34 Loading configuration
+[INFO] 2026-05-28 13:09:34 Selected region: ap-south-1
+[INFO] 2026-05-28 13:09:48 Loading configuration
+[INFO] 2026-05-28 13:09:48 Selected region: ap-south-1
+[INFO] 2026-05-28 13:11:00 Loading configuration
+[INFO] 2026-05-28 13:11:00 Selected region: ap-south-1
+[INFO] 2026-05-28 13:11:11 Loading configuration
+[INFO] 2026-05-28 13:11:11 Selected region: ap-south-1
+[INFO] 2026-05-28 13:11:25 Loading configuration
+[INFO] 2026-05-28 13:11:25 Selected region: ap-south-1
+[INFO] 2026-05-28 13:11:56 Loading configuration
+[INFO] 2026-05-28 13:11:56 Selected region: ap-south-1
+[INFO] 2026-05-28 13:12:10 Loading configuration
+[INFO] 2026-05-28 13:12:10 Selected region: ap-south-1
+[INFO] 2026-05-28 13:20:22 Loading configuration
+[INFO] 2026-05-28 13:20:22 Selected region: ap-south-1
+[INFO] 2026-05-28 13:20:22 Script terminated by user before changes.
+[INFO] 2026-05-28 13:21:56 Loading configuration
+[INFO] 2026-05-28 13:21:56 Selected region: ap-south-1
+[INFO] 2026-05-28 13:21:56 Script terminated by user before changes.
+[INFO] 2026-05-28 13:23:29 Loading configuration
+[INFO] 2026-05-28 13:23:53 Selected region: ap-south-1
+[INFO] 2026-05-28 13:25:38 Creating new S3 bucket 'demo-bucket-testing-1-for-policyscript' in region ap-south-1.
+[INFO] 2026-05-28 13:25:40 Creating S3 policy 's3-access-demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 13:25:42 Attaching policy 's3-access-demo-bucket-testing-1-for-policyscript' to IAM user 'mangeshV'.
+[INFO] 2026-05-28 13:25:43 Completed all requested operations.
+[INFO] 2026-05-28 14:04:48 Loading configuration
+[INFO] 2026-05-28 14:04:50 Selected region: ap-south-1
+[INFO] 2026-05-28 14:05:37 Creating new CodeCommit repo 'demo-for-script-testing'.
+[INFO] 2026-05-28 14:05:38 Creating CodeCommit policy 'repo-access-demo-for-script-testing' for 'developer'.
+[INFO] 2026-05-28 14:12:54 Loading configuration
+[INFO] 2026-05-28 14:16:10 Loading configuration
+[INFO] 2026-05-28 14:16:12 Selected region: ap-south-1
+[INFO] 2026-05-28 14:17:13 Using existing CodeCommit repo 'demo-for-script-testing'.
+[INFO] 2026-05-28 14:17:13 Creating CodeCommit policy 'repo-access-demo-for-script-testing' for 'lead'.
+[INFO] 2026-05-28 14:19:04 Loading configuration
+[INFO] 2026-05-28 14:19:05 Selected region: ap-south-1
+[INFO] 2026-05-28 14:19:54 Using existing CodeCommit repo 'demo-for-script-testing'.
+[INFO] 2026-05-28 14:19:54 Creating CodeCommit policy 'repo-access-demo-for-script-testing' for 'lead'.
+[INFO] 2026-05-28 14:19:58 Completed all requested operations.
+[INFO] 2026-05-28 14:20:24 Loading configuration
+[INFO] 2026-05-28 14:20:26 Selected region: ap-south-1
+[INFO] 2026-05-28 14:21:13 Using existing CodeCommit repo 'demo-for-script-testing'.
+[INFO] 2026-05-28 14:21:13 Attaching existing policy 'repo-access-demo-for-script-testing' to IAM user 'mangeshV'.
+[INFO] 2026-05-28 14:21:16 Completed all requested operations.
+[INFO] 2026-05-28 14:21:23 Loading configuration
+[INFO] 2026-05-28 14:21:24 Selected region: ap-south-1
+[INFO] 2026-05-28 14:22:28 Creating new CodeCommit repo 'demo-for-script-testing-2'.
+[INFO] 2026-05-28 14:22:29 Creating CodeCommit policy 'repo-access-demo-for-script-testing-2' for 'developer'.
+[INFO] 2026-05-28 14:22:33 Completed all requested operations.
+[INFO] 2026-05-28 14:22:53 Loading configuration
+[INFO] 2026-05-28 14:22:55 Selected region: ap-south-1
+[INFO] 2026-05-28 14:23:29 Script terminated by user before changes.
+[INFO] 2026-05-28 14:48:09 Loading configuration
+[INFO] 2026-05-28 14:48:13 Selected region: ap-south-1
+[INFO] 2026-05-28 14:49:47 Creating IAM user 'mangeshV2'.
+[INFO] 2026-05-28 14:49:49 Creating new S3 bucket 'demo-bucket-testing-1-for-policyscript-2' in region ap-south-1.
+[INFO] 2026-05-28 14:49:50 Creating S3 policy 's3-access-full-demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 14:49:52 Attaching policy 's3-access-full-demo-bucket-testing-1-for-policyscript' to IAM user 'mangeshV2'.
+[INFO] 2026-05-28 14:49:54 Completed all requested operations.
+[INFO] 2026-05-28 15:02:23 Loading configuration
+[INFO] 2026-05-28 15:02:25 Selected region: ap-south-1
+[INFO] 2026-05-28 15:03:28 Creating new CodeCommit repo 'demo-for-script-testing-3'.
+[INFO] 2026-05-28 15:03:29 Creating CodeCommit policy 'repo-access-demo-for-script-testing-lead' for 'lead'.
+[INFO] 2026-05-28 15:03:33 Completed all requested operations.
+[INFO] 2026-05-28 15:20:55 Loading configuration
+[INFO] 2026-05-28 15:20:57 Selected region: ap-south-1
+[INFO] 2026-05-28 15:24:09 Script terminated by user before changes.
