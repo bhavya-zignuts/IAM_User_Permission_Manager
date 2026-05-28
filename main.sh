@@ -104,7 +104,9 @@ review_changes() {
       echo "S3 Bucket Action:  Existing bucket"
     fi
     echo "S3 Bucket:         $PLAN_S3_BUCKET"
-    echo "S3 Permission:     $PLAN_S3_PERMISSION_LEVEL"
+    if [[ "$PLAN_S3_PERMISSION_LEVEL" != "" ]]; then
+      echo "S3 Permission:     $PLAN_S3_PERMISSION_LEVEL"
+    fi
   fi
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
     echo "Service:           CodeCommit"
@@ -223,7 +225,6 @@ block_b1() {
         case $rc in
           0)
             PLAN_S3_ACTION="existing"
-            select_s3_permission_level
             break
             ;;
           2)
@@ -255,7 +256,6 @@ block_b1() {
             ;;
           *)
             PLAN_S3_ACTION="new"
-            select_s3_permission_level
             break
             ;;
         esac
@@ -346,6 +346,7 @@ block_c() {
           echo "Policy '$PLAN_S3_POLICY_NAME' already exists. Choose another name."
           continue
         fi
+        select_s3_permission_level
         break
         ;;
       2)
@@ -539,7 +540,9 @@ block_result() {
   if [[ "$PLAN_S3_ACTION" != "" ]]; then
     echo "S3 Bucket: $PLAN_S3_BUCKET"
     echo "S3 Bucket Action: $PLAN_S3_ACTION"
-    echo "S3 Permission Level: $PLAN_S3_PERMISSION_LEVEL"
+    if [[ "$PLAN_S3_PERMISSION_LEVEL" != "" ]]; then
+      echo "S3 Permission Level: $PLAN_S3_PERMISSION_LEVEL"
+    fi
   fi
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
     echo "CodeCommit Repo: $PLAN_CODECOMMIT_REPO"

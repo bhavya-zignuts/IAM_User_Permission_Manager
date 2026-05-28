@@ -85,3 +85,48 @@
 [INFO] 2026-05-28 15:20:55 Loading configuration
 [INFO] 2026-05-28 15:20:57 Selected region: ap-south-1
 [INFO] 2026-05-28 15:24:09 Script terminated by user before changes.
+[INFO] 2026-05-28 15:37:40 Loading configuration
+[INFO] 2026-05-28 15:37:46 Selected region: ap-south-1
+[INFO] 2026-05-28 15:40:39 Creating new S3 bucket 'demo-bucket-testing-1-for-policyscript-2' in region ap-south-1.
+[INFO] 2026-05-28 15:41:07 Loading configuration
+[INFO] 2026-05-28 15:41:11 Selected region: ap-south-1
+[INFO] 2026-05-28 15:45:07 Creating IAM user 'mangesh'.
+[INFO] 2026-05-28 15:45:09 Creating new S3 bucket 'demo-bucket-testing-1-for-policyscript-3' in region ap-south-1.
+[INFO] 2026-05-28 15:45:11 Creating S3 policy 's3-bucket-access-demo-bucket-testing-1-for-policyscript-3'.
+[INFO] 2026-05-28 15:45:13 Attaching policy 's3-bucket-access-demo-bucket-testing-1-for-policyscript-3' to IAM user 'mangesh'.
+[INFO] 2026-05-28 15:45:14 Completed all requested operations.
+[INFO] 2026-05-28 15:47:32 Loading configuration
+[INFO] 2026-05-28 15:47:35 Selected region: ap-south-1
+[INFO] 2026-05-28 15:49:25 Script terminated by user before changes.
+[INFO] 2026-05-28 15:49:42 Loading configuration
+[INFO] 2026-05-28 15:49:45 Selected region: ap-south-1
+[INFO] 2026-05-28 15:51:21 Creating new CodeCommit repo 'test-repo'.
+[INFO] 2026-05-28 15:51:22 Creating CodeCommit policy 'repo-access-test-repo' for 'developer'.
+[INFO] 2026-05-28 15:51:26 Completed all requested operations.
+[INFO] 2026-05-28 15:52:54 Loading configuration
+[INFO] 2026-05-28 15:52:56 Selected region: ap-south-1
+[INFO] 2026-05-28 15:53:48 Using existing CodeCommit repo 'test-repo'.
+[INFO] 2026-05-28 15:53:48 Attaching existing policy 'repo-access-test-repo' to IAM user 'mangesh'.
+[INFO] 2026-05-28 15:53:51 Completed all requested operations.
+[INFO] 2026-05-28 16:10:20 Loading configuration
+[INFO] 2026-05-28 16:10:22 Selected region: ap-south-1
+[INFO] 2026-05-28 16:13:13 Using existing S3 bucket 'demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:13:13 Creating S3 policy 's3-access-demo-bucket-testing-1-for-policyscript'.
+[ERROR] 2026-05-28 16:13:15 Failed to create S3 IAM policy 's3-access-demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:17:03 Loading configuration
+[INFO] 2026-05-28 16:17:25 Loading configuration
+[INFO] 2026-05-28 16:17:25 Selected region: ap-south-1
+[INFO] 2026-05-28 16:17:25 User canceled before applying changes. Starting rollback/exit.
+[INFO] 2026-05-28 16:17:25 No resources to rollback.
+[INFO] 2026-05-28 16:17:54 Loading configuration
+[INFO] 2026-05-28 16:17:56 Selected region: ap-south-1
+[INFO] 2026-05-28 16:19:29 Using existing S3 bucket 'demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:19:29 Creating S3 policy 's3-access-new-demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:19:31 Attaching policy 's3-access-new-demo-bucket-testing-1-for-policyscript' to IAM user 'mangesh'.
+[INFO] 2026-05-28 16:19:32 Completed all requested operations.
+[INFO] 2026-05-28 16:20:47 Loading configuration
+[INFO] 2026-05-28 16:20:49 Selected region: ap-south-1
+[INFO] 2026-05-28 16:22:00 Using existing S3 bucket 'demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:22:00 Creating S3 policy 's3-fullaccess-demo-bucket-testing-1-for-policyscript'.
+[INFO] 2026-05-28 16:22:02 Attaching policy 's3-fullaccess-demo-bucket-testing-1-for-policyscript' to IAM user 'mangeshv'.
+[INFO] 2026-05-28 16:22:04 Completed all requested operations.

@@ -4,22 +4,36 @@ set -euo pipefail
 
 s3_bucket_status() {
   local bucket_name="$1"
-  local err
+  local output
 
-  err=$(aws s3api head-bucket --bucket "$bucket_name" 2>&1) || true
-  if [[ -z "$err" ]]; then
+  if output=$(aws s3api head-bucket --bucket "$bucket_name" --region "$AWS_REGION" 2>&1); then
     return 0
   fi
 
-  if [[ "$err" =~ Not[[:space:]]Found|404 ]]; then
+  if s3_bucket_owned_by_account "$bucket_name"; then
+    return 0
+  fi
+
+  if [[ "$output" =~ NoSuchBucket|Not[[:space:]]Found|404 ]]; then
     return 1
   fi
 
-  if [[ "$err" =~ Forbidden|403|301|AccessDenied ]]; then
+  if [[ "$output" =~ Forbidden|403|301|PermanentRedirect|AccessDenied ]]; then
     return 2
   fi
 
   return 1
+}
+
+s3_bucket_owned_by_account() {
+  local bucket_name="$1"
+  local found
+
+  found=$(aws s3api list-buckets \
+    --query "Buckets[?Name=='${bucket_name}'].Name | [0]" \
+    --output text 2>/dev/null) || return 1
+
+  [[ "$found" == "$bucket_name" ]]
 }
 
 s3_bucket_exists() {
@@ -34,27 +48,25 @@ create_s3_bucket() {
   local bucket_name="$1"
   local region="$2"
   local output
-  local rc
 
   if [[ "$region" == "us-east-1" ]]; then
-    output=$(aws s3api create-bucket --bucket "$bucket_name" 2>&1)
-    rc=$?
+    if output=$(aws s3api create-bucket --bucket "$bucket_name" 2>&1); then
+      return 0
+    fi
   else
-    output=$(aws s3api create-bucket --bucket "$bucket_name" --create-bucket-configuration LocationConstraint="$region" 2>&1)
-    rc=$?
+    if output=$(aws s3api create-bucket --bucket "$bucket_name" --create-bucket-configuration LocationConstraint="$region" 2>&1); then
+      return 0
+    fi
   fi
 
-  if [[ $rc -ne 0 ]]; then
-    if [[ "$output" =~ BucketAlreadyExists ]]; then
-      echo "Bucket name '$bucket_name' is already taken by another AWS account." >&2
-    elif [[ "$output" =~ BucketAlreadyOwnedByYou ]]; then
-      echo "Bucket '$bucket_name' is already owned by this account." >&2
-    else
-      echo "$output" >&2
-    fi
-    return 1
+  if [[ "$output" =~ BucketAlreadyExists ]]; then
+    echo "Bucket name '$bucket_name' is already taken by another AWS account." >&2
+  elif [[ "$output" =~ BucketAlreadyOwnedByYou ]]; then
+    echo "Bucket '$bucket_name' is already owned by this account." >&2
+  else
+    echo "$output" >&2
   fi
-  return 0
+  return 1
 }
 
 s3_policy_actions() {
