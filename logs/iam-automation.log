@@ -239,3 +239,27 @@
 [INFO] 2026-05-29 11:40:51 Using existing CodeCommit repo 'demo-zignuts-1'.
 [INFO] 2026-05-29 11:40:51 Attaching existing policy 'repo-access-lead-demo-zignuts-1' to IAM user 'bhavya5'.
 [INFO] 2026-05-29 11:40:55 Completed all requested operations.
+[INFO] 2026-05-29 12:13:12 Loading configuration
+[INFO] 2026-05-29 12:13:13 Selected region: ap-south-1
+[INFO] 2026-05-29 12:14:49 Creating IAM user 'bhavya2'.
+[INFO] 2026-05-29 12:14:53 Creating console login profile for IAM user 'bhavya2'.
+[INFO] 2026-05-29 12:14:59 Creating new S3 bucket 'demo-zignuts-1' in region ap-south-1.
+[INFO] 2026-05-29 12:15:02 Creating S3 policy 's3-access-full-demo-zignuts-1'.
+[INFO] 2026-05-29 12:15:09 Attaching policy 's3-access-full-demo-zignuts-1' to IAM user 'bhavya2'.
+[INFO] 2026-05-29 12:15:12 Completed all requested operations.
+[INFO] 2026-05-29 12:16:43 Loading configuration
+[INFO] 2026-05-29 12:16:44 Selected region: ap-south-1
+[INFO] 2026-05-29 12:17:37 Creating CodeCommit username/password credentials for IAM user 'bhavya2'.
+[INFO] 2026-05-29 12:17:39 Creating new CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 12:17:41 Creating CodeCommit policy 'repo-access-dev-demo-zignuts-1' for 'developer'.
+[INFO] 2026-05-29 12:17:46 Completed all requested operations.
+[INFO] 2026-05-29 12:19:13 Loading configuration
+[INFO] 2026-05-29 12:19:15 Selected region: ap-south-1
+[INFO] 2026-05-29 12:19:57 Using existing CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 12:19:57 Creating CodeCommit policy 'repo-access-lead-demo-zignuts-1' for 'developer'.
+[INFO] 2026-05-29 12:20:02 Completed all requested operations.
+[INFO] 2026-05-29 12:21:34 Loading configuration
+[INFO] 2026-05-29 12:21:35 Selected region: ap-south-1
+[INFO] 2026-05-29 12:22:32 Creating new CodeCommit repo 'demo-zignuts-2'.
+[INFO] 2026-05-29 12:22:33 Creating CodeCommit policy 'repo-access-lead-demo-zignuts-2' for 'lead'.
+[INFO] 2026-05-29 12:22:37 Completed all requested operations.
