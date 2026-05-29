@@ -187,3 +187,55 @@
 [INFO] 2026-05-28 18:47:08 Using existing S3 bucket 'new-demo-test-zignuts-1'.
 [INFO] 2026-05-28 18:47:08 Attaching existing policy 's3-access-new-demo-test-zignuts-1' to IAM user 'mangesh'.
 [INFO] 2026-05-28 18:47:12 Completed all requested operations.
+[INFO] 2026-05-29 10:49:13 Loading configuration
+[INFO] 2026-05-29 10:49:17 Selected region: ap-south-1
+[INFO] 2026-05-29 10:51:10 Creating IAM user 'bhavya2'.
+[INFO] 2026-05-29 10:51:12 Creating CodeCommit username/password credentials for IAM user 'bhavya2'.
+[INFO] 2026-05-29 10:51:14 Creating new CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 10:51:15 Creating CodeCommit policy 'repo-access-lead-demo-zignuts-1' for 'existing policy'.
+[ERROR] 2026-05-29 10:51:16 Failed to create CodeCommit IAM policy 'repo-access-lead-demo-zignuts-1'.
+[INFO] 2026-05-29 10:53:11 Loading configuration
+[INFO] 2026-05-29 10:53:13 Selected region: ap-south-1
+[INFO] 2026-05-29 10:54:16 Creating IAM user 'bhavya3'.
+[INFO] 2026-05-29 10:54:18 Creating CodeCommit username/password credentials for IAM user 'bhavya3'.
+[INFO] 2026-05-29 10:54:20 Using existing CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 10:54:20 Attaching existing policy 'repo-access-lead-demo-zignuts-1' to IAM user 'bhavya3'.
+[INFO] 2026-05-29 10:54:23 Completed all requested operations.
+[INFO] 2026-05-29 11:05:27 Loading configuration
+[INFO] 2026-05-29 11:05:28 Selected region: ap-south-1
+[INFO] 2026-05-29 11:06:48 Using existing CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 11:06:48 Creating CodeCommit policy 'repo-access-full-new-demo-zignuts-1' for 'lead'.
+[INFO] 2026-05-29 11:06:53 Completed all requested operations.
+[INFO] 2026-05-29 11:10:55 Loading configuration
+[INFO] 2026-05-29 11:10:57 Selected region: ap-south-1
+[INFO] 2026-05-29 11:11:39 Creating new S3 bucket 'demo-zignuts-1' in region ap-south-1.
+[INFO] 2026-05-29 11:11:40 Creating S3 policy 's3-access-full-demo-zignuts-1'.
+[INFO] 2026-05-29 11:11:42 Attaching policy 's3-access-full-demo-zignuts-1' to IAM user 'bhavya3'.
+[INFO] 2026-05-29 11:11:44 Completed all requested operations.
+[INFO] 2026-05-29 11:17:10 Loading configuration
+[INFO] 2026-05-29 11:17:11 Selected region: ap-south-1
+[INFO] 2026-05-29 11:19:44 Creating IAM user 'bhavya4'.
+[INFO] 2026-05-29 11:19:46 Creating console login profile for IAM user 'bhavya4'.
+[INFO] 2026-05-29 11:19:49 Creating new S3 bucket 'demo-zignuts-2' in region ap-south-1.
+[INFO] 2026-05-29 11:19:51 Creating S3 policy 's3-access-full-demo-zignuts-2'.
+[INFO] 2026-05-29 11:19:53 Attaching policy 's3-access-full-demo-zignuts-2' to IAM user 'bhavya4'.
+[INFO] 2026-05-29 11:19:54 Completed all requested operations.
+[INFO] 2026-05-29 11:29:29 Loading configuration
+[INFO] 2026-05-29 11:29:35 Selected region: ap-south-1
+[INFO] 2026-05-29 11:31:09 Creating IAM user 'bhavya5'.
+[INFO] 2026-05-29 11:31:11 Creating console login profile for IAM user 'bhavya5'.
+[INFO] 2026-05-29 11:31:14 Creating new S3 bucket 'demo-zignuts-5' in region ap-south-1.
+[INFO] 2026-05-29 11:31:16 Creating S3 policy 's3-access-full-demo-zignuts-5'.
+[INFO] 2026-05-29 11:31:18 Attaching policy 's3-access-full-demo-zignuts-5' to IAM user 'bhavya5'.
+[INFO] 2026-05-29 11:31:20 Completed all requested operations.
+[INFO] 2026-05-29 11:35:58 Loading configuration
+[INFO] 2026-05-29 11:36:01 Selected region: ap-south-1
+[INFO] 2026-05-29 11:37:07 Creating CodeCommit username/password credentials for IAM user 'bhavya5'.
+[INFO] 2026-05-29 11:37:09 Creating new CodeCommit repo 'demo-zignuts-5'.
+[INFO] 2026-05-29 11:37:11 Creating CodeCommit policy 'repo-access-lead-demo-zignuts-5' for 'lead'.
+[INFO] 2026-05-29 11:37:14 Completed all requested operations.
+[INFO] 2026-05-29 11:40:07 Loading configuration
+[INFO] 2026-05-29 11:40:09 Selected region: ap-south-1
+[INFO] 2026-05-29 11:40:51 Using existing CodeCommit repo 'demo-zignuts-1'.
+[INFO] 2026-05-29 11:40:51 Attaching existing policy 'repo-access-lead-demo-zignuts-1' to IAM user 'bhavya5'.
+[INFO] 2026-05-29 11:40:55 Completed all requested operations.

@@ -21,14 +21,18 @@ PLAN_CODECOMMIT_ACTION=""
 PLAN_CODECOMMIT_REPO=""
 PLAN_CODECOMMIT_POLICY_NAME=""
 PLAN_CODECOMMIT_POLICY_TYPE=""
+PLAN_CREATE_CODECOMMIT_CREDENTIALS="no"
+PLAN_CODECOMMIT_CREDENTIALS_STATUS=""
 PLAN_S3_POLICY_NAME=""
 PLAN_EXISTING_POLICY_NAME=""
 PLAN_CREATE_CONSOLE_PASSWORD="no"
+PLAN_CONSOLE_PASSWORD_STATUS=""
 PLAN_CONSOLE_PASSWORD=""
 RESULT_CONSOLE_PASSWORD=""
 RESULT_CONSOLE_SIGNIN_URL=""
-RESULT_ACCESS_KEY_ID=""
-RESULT_SECRET_ACCESS_KEY=""
+RESULT_CODECOMMIT_CREDENTIAL_USERNAME=""
+RESULT_CODECOMMIT_CREDENTIAL_PASSWORD=""
+RESULT_CODECOMMIT_CREDENTIAL_ID=""
 RESULT_ATTACHED_POLICY_NAME=""
 RESULT_ATTACHED_POLICY_ARN=""
 
@@ -115,13 +119,11 @@ review_changes() {
     if [[ "$PLAN_S3_PERMISSION_LEVEL" != "" ]]; then
       echo "S3 Permission:     $PLAN_S3_PERMISSION_LEVEL"
     fi
-    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
-      if [[ "$PLAN_CREATE_CONSOLE_PASSWORD" == "yes" ]]; then
-        echo "Console Password:  Create login profile"
-      else
-        echo "Console Password:  Do not create"
-      fi
-    fi
+    case "$PLAN_CONSOLE_PASSWORD_STATUS" in
+      create) echo "Console Password:  Create login profile" ;;
+      existing) echo "Console Password:  Already enabled" ;;
+      skip) echo "Console Password:  Do not create" ;;
+    esac
   fi
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
     echo "Service:           CodeCommit"
@@ -134,9 +136,11 @@ review_changes() {
     if [[ "$PLAN_CODECOMMIT_POLICY_TYPE" != "" ]]; then
       echo "Policy Type:       $(codecommit_policy_type_label)"
     fi
-    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
-      echo "Access Keys:       Create IAM access key"
-    fi
+    case "$PLAN_CODECOMMIT_CREDENTIALS_STATUS" in
+      create) echo "CodeCommit Credentials: Create username/password" ;;
+      existing) echo "CodeCommit Credentials: Already present" ;;
+      skip) echo "CodeCommit Credentials: Do not create" ;;
+    esac
   fi
   if [[ "$PLAN_S3_POLICY_NAME" != "" ]]; then
     echo "S3 Policy Name:    $PLAN_S3_POLICY_NAME"
@@ -209,11 +213,12 @@ block_b() {
     case "$choice" in
       1)
         block_b1
-        prompt_console_password_for_new_user
+        prompt_console_password_for_s3_user
         break
         ;;
       2)
         block_b2
+        prompt_codecommit_credentials
         break
         ;;
       3)
@@ -304,14 +309,23 @@ select_s3_permission_level() {
   done
 }
 
-prompt_console_password_for_new_user() {
-  if [[ "$PLAN_USER_ACTION" != "new" ]]; then
-    return
-  fi
+prompt_console_password_for_s3_user() {
+  PLAN_CREATE_CONSOLE_PASSWORD="no"
+  PLAN_CONSOLE_PASSWORD_STATUS="skip"
 
   echo -e "\n=== IAM Console Sign-In ==="
-  if confirm "Create a console sign-in password for new IAM user '$PLAN_IAM_USER'?"; then
+  if [[ "$PLAN_USER_ACTION" == "existing" ]]; then
+    if login_profile_exists "$PLAN_IAM_USER"; then
+      echo "Console password is already enabled for IAM user '$PLAN_IAM_USER'."
+      PLAN_CONSOLE_PASSWORD_STATUS="existing"
+      return
+    fi
+    echo "Console password is not enabled for IAM user '$PLAN_IAM_USER'."
+  fi
+
+  if confirm "Create a console sign-in password for IAM user '$PLAN_IAM_USER'?"; then
     PLAN_CREATE_CONSOLE_PASSWORD="yes"
+    PLAN_CONSOLE_PASSWORD_STATUS="create"
     while true; do
       read -r -s -p "Enter console password for '$PLAN_IAM_USER': " password
       echo
@@ -329,6 +343,29 @@ prompt_console_password_for_new_user() {
     done
   else
     PLAN_CREATE_CONSOLE_PASSWORD="no"
+    PLAN_CONSOLE_PASSWORD_STATUS="skip"
+  fi
+}
+
+prompt_codecommit_credentials() {
+  PLAN_CREATE_CODECOMMIT_CREDENTIALS="no"
+  PLAN_CODECOMMIT_CREDENTIALS_STATUS="skip"
+
+  echo -e "\n=== CodeCommit Git Credentials ==="
+  if [[ "$PLAN_USER_ACTION" == "existing" ]]; then
+    if codecommit_service_credential_exists "$PLAN_IAM_USER"; then
+      echo "CodeCommit username/password credentials already exist for IAM user '$PLAN_IAM_USER'."
+      PLAN_CODECOMMIT_CREDENTIALS_STATUS="existing"
+      return
+    fi
+    echo "No CodeCommit username/password credentials found for IAM user '$PLAN_IAM_USER'."
+  fi
+
+  if confirm "Do you want to create API keys for AWS CodeCommit for IAM user '$PLAN_IAM_USER'?"; then
+    PLAN_CREATE_CODECOMMIT_CREDENTIALS="yes"
+    PLAN_CODECOMMIT_CREDENTIALS_STATUS="create"
+  else
+    PLAN_CODECOMMIT_CREDENTIALS_STATUS="skip"
   fi
 }
 
@@ -436,12 +473,15 @@ block_c() {
     case "$choice" in
       1)
         read -r -p "Enter the new IAM policy name: " PLAN_S3_POLICY_NAME
+        PLAN_EXISTING_POLICY_NAME=""
         if ! is_valid_policy_name "$PLAN_S3_POLICY_NAME"; then
           echo "Invalid policy name. Avoid spaces and use allowed characters."
+          PLAN_S3_POLICY_NAME=""
           continue
         fi
         if iam_policy_exists "$PLAN_S3_POLICY_NAME"; then
           echo "Policy '$PLAN_S3_POLICY_NAME' already exists. Choose another name."
+          PLAN_S3_POLICY_NAME=""
           continue
         fi
         select_s3_permission_level
@@ -449,12 +489,16 @@ block_c() {
         ;;
       2)
         read -r -p "Enter existing IAM policy name to attach: " PLAN_EXISTING_POLICY_NAME
+        PLAN_S3_POLICY_NAME=""
+        PLAN_S3_PERMISSION_LEVEL=""
         if ! is_valid_policy_name "$PLAN_EXISTING_POLICY_NAME"; then
           echo "Invalid policy name. Avoid spaces and use allowed characters."
+          PLAN_EXISTING_POLICY_NAME=""
           continue
         fi
         if ! iam_policy_exists "$PLAN_EXISTING_POLICY_NAME"; then
           echo "Policy '$PLAN_EXISTING_POLICY_NAME' does not exist."
+          PLAN_EXISTING_POLICY_NAME=""
           continue
         fi
         break
@@ -478,12 +522,15 @@ block_d() {
     case "$choice" in
       1)
         read -r -p "Enter the new IAM policy name: " PLAN_CODECOMMIT_POLICY_NAME
+        PLAN_EXISTING_POLICY_NAME=""
         if ! is_valid_policy_name "$PLAN_CODECOMMIT_POLICY_NAME"; then
           echo "Invalid policy name. Avoid spaces and use allowed characters."
+          PLAN_CODECOMMIT_POLICY_NAME=""
           continue
         fi
         if iam_policy_exists "$PLAN_CODECOMMIT_POLICY_NAME"; then
           echo "Policy '$PLAN_CODECOMMIT_POLICY_NAME' already exists. Choose a different name."
+          PLAN_CODECOMMIT_POLICY_NAME=""
           continue
         fi
         block_f
@@ -491,12 +538,16 @@ block_d() {
         ;;
       2)
         read -r -p "Enter existing IAM policy name to attach: " PLAN_EXISTING_POLICY_NAME
+        PLAN_CODECOMMIT_POLICY_NAME=""
+        PLAN_CODECOMMIT_POLICY_TYPE=""
         if ! is_valid_policy_name "$PLAN_EXISTING_POLICY_NAME"; then
           echo "Invalid policy name. Avoid spaces and use allowed characters."
+          PLAN_EXISTING_POLICY_NAME=""
           continue
         fi
         if ! iam_policy_exists "$PLAN_EXISTING_POLICY_NAME"; then
           echo "Policy '$PLAN_EXISTING_POLICY_NAME' does not exist."
+          PLAN_EXISTING_POLICY_NAME=""
           continue
         fi
         break
@@ -554,6 +605,24 @@ codecommit_console_url() {
 
 codecommit_clone_url() {
   printf 'https://git-codecommit.%s.amazonaws.com/v1/repos/%s\n' "$AWS_REGION" "$PLAN_CODECOMMIT_REPO"
+}
+
+codecommit_policy_template_path() {
+  case "$PLAN_CODECOMMIT_POLICY_TYPE" in
+    dev) printf '%s/repo-access-backpackercars-backend-developer.json\n' "$SCRIPT_ROOT" ;;
+    lead) printf '%s/repo-access-backpackercars-backend-lead.json\n' "$SCRIPT_ROOT" ;;
+    *) return 1 ;;
+  esac
+}
+
+render_codecommit_policy_json() {
+  local template_path="$1"
+  local output_file="$2"
+  local account_id="$3"
+
+  cp "$template_path" "$output_file"
+  sed -E -i.bak "s|arn:aws:codecommit:[a-z0-9-]+:[0-9]{12}:[A-Za-z0-9._-]+|arn:aws:codecommit:${AWS_REGION}:${account_id}:${PLAN_CODECOMMIT_REPO}|g" "$output_file"
+  rm -f "$output_file.bak"
 }
 
 perform_plan() {
@@ -619,15 +688,15 @@ perform_plan() {
   fi
 
   if [[ "$PLAN_CODECOMMIT_ACTION" != "" ]]; then
-    if [[ "$PLAN_USER_ACTION" == "new" ]]; then
-      log_info "Creating IAM access key for CodeCommit user '$PLAN_IAM_USER'."
-      local access_key_output
-      if ! access_key_output="$(create_access_key_for_user "$PLAN_IAM_USER")"; then
-        log_error "Failed to create access key for IAM user '$PLAN_IAM_USER'."
+    if [[ "$PLAN_CREATE_CODECOMMIT_CREDENTIALS" == "yes" ]]; then
+      log_info "Creating CodeCommit username/password credentials for IAM user '$PLAN_IAM_USER'."
+      local codecommit_credential_output
+      if ! codecommit_credential_output="$(create_codecommit_service_credential_for_user "$PLAN_IAM_USER")"; then
+        log_error "Failed to create CodeCommit credentials for IAM user '$PLAN_IAM_USER'."
         return 1
       fi
-      read -r RESULT_ACCESS_KEY_ID RESULT_SECRET_ACCESS_KEY <<< "$access_key_output"
-      queue_resource "access-key:$PLAN_IAM_USER|$RESULT_ACCESS_KEY_ID"
+      read -r RESULT_CODECOMMIT_CREDENTIAL_USERNAME RESULT_CODECOMMIT_CREDENTIAL_PASSWORD RESULT_CODECOMMIT_CREDENTIAL_ID <<< "$codecommit_credential_output"
+      queue_resource "codecommit-credential:$PLAN_IAM_USER|$RESULT_CODECOMMIT_CREDENTIAL_ID"
     fi
 
     if [[ "$PLAN_CODECOMMIT_ACTION" == "new" ]]; then
@@ -639,9 +708,20 @@ perform_plan() {
     fi
 
     if [[ "$PLAN_CODECOMMIT_POLICY_NAME" != "" ]]; then
+      if [[ "$PLAN_CODECOMMIT_POLICY_TYPE" == "" ]]; then
+        log_error "CodeCommit policy type was not selected for new policy '$PLAN_CODECOMMIT_POLICY_NAME'."
+        return 1
+      fi
       log_info "Creating CodeCommit policy '$PLAN_CODECOMMIT_POLICY_NAME' for '$(codecommit_policy_type_label)'."
       local template_path
-      template_path="$POLICY_DIR/codecommit-${PLAN_CODECOMMIT_POLICY_TYPE}.json"
+      if ! template_path="$(codecommit_policy_template_path)"; then
+        log_error "Unknown CodeCommit policy type '$PLAN_CODECOMMIT_POLICY_TYPE'."
+        return 1
+      fi
+      if [[ ! -f "$template_path" ]]; then
+        log_error "CodeCommit policy template '$template_path' was not found."
+        return 1
+      fi
       local account_id
       if ! account_id="$(get_account_id)" || [[ -z "$account_id" ]]; then
         log_error "Unable to determine AWS account ID for CodeCommit policy."
@@ -649,10 +729,7 @@ perform_plan() {
       fi
       local policy_file
       policy_file="$(mktemp "${TMPDIR:-/tmp}/codecommit-policy.json.XXXXXX")"
-      if ! render_template "$template_path" "$policy_file" \
-        "ACCOUNT_ID=$account_id" \
-        "REGION=$AWS_REGION" \
-        "REPO_NAME=$PLAN_CODECOMMIT_REPO"; then
+      if ! render_codecommit_policy_json "$template_path" "$policy_file" "$account_id"; then
         rm -f "$policy_file"
         log_error "Failed to render CodeCommit policy template '$template_path'."
         return 1
@@ -723,9 +800,10 @@ block_result() {
     echo "Console Sign-In Password: $RESULT_CONSOLE_PASSWORD"
     echo "Console Sign-In URL: $RESULT_CONSOLE_SIGNIN_URL"
   fi
-  if [[ "$RESULT_ACCESS_KEY_ID" != "" ]]; then
-    echo "IAM Access Key ID: $RESULT_ACCESS_KEY_ID"
-    echo "IAM Secret Access Key: $RESULT_SECRET_ACCESS_KEY"
+  if [[ "$RESULT_CODECOMMIT_CREDENTIAL_USERNAME" != "" ]]; then
+    echo "CodeCommit Username: $RESULT_CODECOMMIT_CREDENTIAL_USERNAME"
+    echo "CodeCommit Password: $RESULT_CODECOMMIT_CREDENTIAL_PASSWORD"
+    echo "CodeCommit Credential ID: $RESULT_CODECOMMIT_CREDENTIAL_ID"
   fi
   echo "==========================="
 }
@@ -743,7 +821,11 @@ main() {
   fi
 
   review_changes
-  perform_plan
+  if ! perform_plan; then
+    log_error "Apply failed after changes started. Rolling back resources created by this run."
+    rollback_resources
+    exit 1
+  fi
   block_result
   log_info "Completed all requested operations."
 }

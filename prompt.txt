@@ -217,3 +217,41 @@ project/
     ├── iam.sh
     ├── s3.sh
     └── codecommit.sh
+
+
+
+
+
+
+Now I want to add some new change in this like if IAM user has been newly created then  after that user select a s3 service then I want to give a option for if you want to generate a console sign in password for that IAM user that password take from the user 
+and after end of the script in the Result I want to add  IAM userpassword , name and Console sign-in link add in the result block 
+
+if new IAM user has been created then also create a API keys for code commit if in the next option user select the codecommit option Because for codecommit we need to generate API keys for the users and at the end that also add in the result block so everytime i do not need to go to console and create and copy paste from that 
+
+and if code commit repo is created then give https linkl ike at the result block  git clone https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/demo-for-script-testing-3 currently given link is not valid for direclty pull the repo so i can send this directly to the user not to go to repo and see the link 
+
+if old IAM user is selected then which resource permissions attached to that give that link so that again after attaching policy i do not need to go and check the link and all stuff 
+
+in the result block even if s3,codecommit is old selecting or old policy get attached to user still give the link of s3 , give the link of codecommit and also give the attached policy to user
+
+
+
+
+
+I want to do changes again
+currently if CodeCommit permissions is selected then it is goes automatically for the console sign in password creation I do not want that(if new IAM user is created abd after thats elected s3 bucket permission option then it is asking first that if you want to create a console pass or not this is fine do not change this) I want that
+if New IAM user is created then after that CodeCommit permissions option is selected then please ask that you want to create API keys for aws code commit ?if yes then create API key for access the code commit. if no then ok
+and if IAM user is already exists then and user has selected CodeCommit permissions then after check that API keys are pesent for that user or not?if present then ok if not present then ask that you want to create API keys for aws code commit ? if yes then create API key for access the code commit if no then ok
+and also at the end in the result block print username and password which is created by API key for codecommit
+
+
+
+
+
+I want changes like if IAM user is already exists and select s3 permissions and IAM user has Console password Not enabled then it ask for to you want tp create a console password ? 
+
+also i want to change the permissions please read file repo-access-backpackercars-backend-developer.json and attach that policy when user select devloper in codecommit IAM policy  , read this file repo-access-backpackercars-backend-lead.json and attach that policy when user select lead in codecommit IAM policy 
+read this file s3-policy.json and attach this policy when user select full access on s3 IAM policy 
+
+here attach means attach a same policy without any changes but you have to edit the details of it like s3 name , codecommit repo name , IAM user name ,region and all which is relevant to that all
+

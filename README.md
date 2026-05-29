@@ -9,8 +9,10 @@ This repository contains a bash-based automation workflow to create or use an ex
 - `config.sh` - shared config and log file setup
 - `policies/`
   - `s3-template.json` - S3 policy template
-  - `codecommit-dev.json` - CodeCommit developer policy template
-  - `codecommit-lead.json` - CodeCommit lead policy template
+  - `codecommit-dev.json` - legacy CodeCommit developer policy template
+  - `codecommit-lead.json` - legacy CodeCommit lead policy template
+  - `../repo-access-backpackercars-backend-developer.json` - CodeCommit developer policy source used by the script
+  - `../repo-access-backpackercars-backend-lead.json` - CodeCommit lead policy source used by the script
 - `logs/` - directory for runtime logs
 - `utils/`
   - `validation.sh` - input validation helpers
@@ -95,8 +97,10 @@ If you cancel at the review stage, no AWS changes are applied. If an AWS command
   - `ReadOnly`
   - `ReadWrite`
   - `FullBucketAdmin`
-- If a new IAM user is created for S3, the script can optionally create a console sign-in password.
-- If a new IAM user is created for CodeCommit, the script creates an IAM access key and prints it once in the result summary.
+- For S3, the script can optionally create a console sign-in password. Existing IAM users are checked first.
+- S3 `FullBucketAdmin` policies are rendered from `s3-policy.json`.
+- CodeCommit developer and lead policies are rendered from the matching `repo-access-backpackercars-backend-*.json` files.
+- For CodeCommit, the script asks before creating CodeCommit HTTPS username/password credentials. Existing IAM users are checked first, and new credentials are printed once in the result summary when created.
 - CodeCommit results include a direct HTTPS clone URL and `git clone` command.
 
 ## Important

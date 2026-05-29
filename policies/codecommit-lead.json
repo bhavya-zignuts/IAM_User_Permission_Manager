@@ -33,6 +33,7 @@
         "codecommit:GetMergeConflicts",
         "codecommit:GetMergeCommit",
         "codecommit:PostCommentForComparedCommit",
+        "codecommit:GitPull",
         "codecommit:GitPush",
         "codecommit:GetMergeOptions",
         "codecommit:PutCommentReaction",

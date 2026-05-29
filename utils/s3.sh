@@ -98,9 +98,33 @@ build_s3_policy_json() {
   local permission_level="$2"
   local output_file="$3"
   local actions
+
+  if [[ "$permission_level" == "FullBucketAdmin" && -f "$SCRIPT_ROOT/s3-policy.json" ]]; then
+    local account_id
+    if ! account_id="$(get_account_id)" || [[ -z "$account_id" ]]; then
+      echo "Unable to determine AWS account ID for S3 policy." >&2
+      return 1
+    fi
+    render_custom_s3_policy_json "$SCRIPT_ROOT/s3-policy.json" "$output_file" "$bucket_name" "$account_id"
+    return
+  fi
+
   actions="$(s3_policy_actions "$permission_level")"
   cp "$POLICY_DIR/s3-template.json" "$output_file"
   sed -i.bak "s|{{ACTIONS}}|${actions}|g" "$output_file"
   sed -i.bak "s|\${BUCKET_NAME}|${bucket_name}|g" "$output_file"
+  rm -f "$output_file.bak"
+}
+
+render_custom_s3_policy_json() {
+  local template_path="$1"
+  local output_file="$2"
+  local bucket_name="$3"
+  local account_id="$4"
+
+  cp "$template_path" "$output_file"
+  sed -E -i.bak "s|arn:aws:s3:::[A-Za-z0-9._-]+/\\*|arn:aws:s3:::${bucket_name}/*|g" "$output_file"
+  sed -E -i.bak "s|arn:aws:s3:::[A-Za-z0-9._-]+|arn:aws:s3:::${bucket_name}|g" "$output_file"
+  sed -E -i.bak "s|arn:aws:s3::[0-9]{12}:accesspoint/\\*|arn:aws:s3::${account_id}:accesspoint/*|g" "$output_file"
   rm -f "$output_file.bak"
 }

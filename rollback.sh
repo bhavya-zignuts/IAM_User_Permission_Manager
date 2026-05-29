@@ -23,6 +23,12 @@ if [[ -n "${ROLLBACK_RESOURCES:-}" ]]; then
         echo "[INFO] Rolling back access key for $user_name" | tee -a "$LOG_FILE"
         delete_access_key_for_user "$user_name" "$access_key_id" || true
         ;;
+      codecommit-credential)
+        user_name="${name%%|*}"
+        credential_id="${name#*|}"
+        echo "[INFO] Rolling back CodeCommit credentials for $user_name" | tee -a "$LOG_FILE"
+        delete_codecommit_service_credential_for_user "$user_name" "$credential_id" || true
+        ;;
       login-profile)
         echo "[INFO] Rolling back console login profile for $name" | tee -a "$LOG_FILE"
         delete_login_profile "$name" || true

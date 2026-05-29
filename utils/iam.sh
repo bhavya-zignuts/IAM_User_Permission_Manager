@@ -37,6 +37,14 @@ create_login_profile() {
     --no-password-reset-required >/dev/null
 }
 
+login_profile_exists() {
+  local user_name="$1"
+  if aws iam get-login-profile --user-name "$user_name" >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
 delete_login_profile() {
   local user_name="$1"
   aws iam delete-login-profile --user-name "$user_name" >/dev/null
@@ -61,6 +69,34 @@ delete_access_key_for_user() {
   local user_name="$1"
   local access_key_id="$2"
   aws iam delete-access-key --user-name "$user_name" --access-key-id "$access_key_id" >/dev/null
+}
+
+codecommit_service_credential_exists() {
+  local user_name="$1"
+  local count
+  count="$(aws iam list-service-specific-credentials \
+    --user-name "$user_name" \
+    --service-name codecommit.amazonaws.com \
+    --query "length(ServiceSpecificCredentials)" \
+    --output text 2>/dev/null)" || return 1
+  [[ "$count" =~ ^[1-9][0-9]*$ ]]
+}
+
+create_codecommit_service_credential_for_user() {
+  local user_name="$1"
+  aws iam create-service-specific-credential \
+    --user-name "$user_name" \
+    --service-name codecommit.amazonaws.com \
+    --query "ServiceSpecificCredential.[ServiceUserName,ServicePassword,ServiceSpecificCredentialId]" \
+    --output text
+}
+
+delete_codecommit_service_credential_for_user() {
+  local user_name="$1"
+  local credential_id="$2"
+  aws iam delete-service-specific-credential \
+    --user-name "$user_name" \
+    --service-specific-credential-id "$credential_id" >/dev/null
 }
 
 iam_policy_exists() {
